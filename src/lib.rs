@@ -24,7 +24,7 @@ mod tests {
     use super::*;
     #[test]
     fn it_works() {
-        let mut world = World::new();
+        let mut world = World::<f32>::new();
 
         world.register_component("location");
 
