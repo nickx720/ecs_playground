@@ -1,14 +1,12 @@
 use std::collections::HashMap;
 
-pub struct Entity<T> where T: core::any::Any, { 
-    data: T,
+pub trait Component {}
+
+pub struct World { 
+    components: HashMap<String,Vec<Box<dyn Component>>>,
 }
 
-pub struct World<T: 'static> { 
-    components: HashMap<String,Vec<Entity<T>>>,
-}
-
-impl<T> World<T> { 
+impl World { 
     pub fn new()-> Self { 
         Self {
             components: HashMap::new(),        }
@@ -24,7 +22,7 @@ mod tests {
     use super::*;
     #[test]
     fn it_works() {
-        let mut world = World::<f32>::new();
+        let mut world = World::new();
 
         world.register_component("location");
 
