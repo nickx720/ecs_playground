@@ -5,27 +5,32 @@ use std::{any::{Any, TypeId}, collections::HashMap, rc::Rc};
 #[derive(Debug)]
 pub struct Data 
 { 
-  pub data: HashMap<TypeId,Vec<Rc<dyn Any>>>,
+    pub data: HashMap<TypeId,Vec<Rc<dyn Any>>>,
 }
 
 impl Data
 { 
-        pub fn new()-> Self { 
-            let data = HashMap::new();
-            Self {
-               data       
-            }
+    pub fn new()-> Self { 
+        let data = HashMap::new();
+        Self {
+            data       
         }
- pub fn insert(&mut self, new_data: impl Any) { 
-     self.data.insert(new_data.type_id(), vec![Rc::new(new_data)]);
- }
-
     }
+    pub fn insert(&mut self, new_data: impl Any) { 
+        self.data.insert(new_data.type_id(), vec![Rc::new(new_data)]);
+    }
+
+    pub fn query<T: Send + Sync + 'static>(&self) -> () {
+        dbg!(std::any::type_name::<T>());
+    }
+
+}
+
 
 #[cfg(test)]
 mod tests {
-use std::any::Any;
-use super::*;
+    use std::any::Any;
+    use super::*;
     #[test]
     fn creating_new_data() {
         let data = Data::new();
@@ -42,5 +47,19 @@ use super::*;
             .downcast::<i32>()
             .unwrap();
         assert_eq!(raw_data,Rc::new(32));
+    }
+
+    #[test]
+    fn query_for_data(){
+        let mut data = Data::new();
+        let entity = 32_i32;
+        let type_id = entity.type_id();
+        data.insert(entity);
+        let query = Query::new
+            .with_type::<i32>()
+            .with_type::<f32>()
+            .build();
+        let result = data.query(query);
+
     }
 }
