@@ -1,11 +1,11 @@
-use std::{any::{Any, TypeId}, collections::HashMap};
+use std::{any::{Any, TypeId}, collections::HashMap, rc::Rc};
 
 
 
 #[derive(Debug)]
 pub struct Data 
 { 
-    data: HashMap<TypeId,Vec<Box <dyn Any>>>,
+  pub data: HashMap<TypeId,Vec<Rc<dyn Any>>>,
 }
 
 impl Data
@@ -17,7 +17,7 @@ impl Data
             }
         }
  pub fn insert(&mut self, new_data: impl Any) { 
-     self.data.insert(new_data.type_id(), vec![Box::new(new_data)]);
+     self.data.insert(new_data.type_id(), vec![Rc::new(new_data)]);
  }
 
     }
@@ -38,8 +38,9 @@ use super::*;
         let test_data_id = 32.type_id();
         data.insert(32);
         let raw_data= data.data.get(&test_data_id).unwrap()[0]
+            .clone()
             .downcast::<i32>()
             .unwrap();
-        assert_eq!(raw_data,Box::new(32));
+        assert_eq!(raw_data,Rc::new(32));
     }
 }
