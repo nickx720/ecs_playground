@@ -31,4 +31,22 @@ mod tests {
         let world = World::new();
         assert_eq!(world.data.data.len(),0);
     }
+
+    #[test]
+    fn insert_entity_into_world(){
+        let mut world = World::new();
+        let location = TestLocation {x:0.0, y:0.0 };
+        world.insert_entity(vec![location]);
+        let data = world.data.data.get(&location.type_id()).unwrap()[0]
+            .downcast::<TestLocation>()
+            .unwrap()
+            .clone();
+        assert_eq!(*data,location);
+    }
+
+    #[derive(Debug,Clone, Copy, PartialEq)]
+    struct TestLocation {
+        x:f32,
+        y:f32,
+    }
 }
