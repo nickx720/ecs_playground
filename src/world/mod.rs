@@ -2,6 +2,7 @@ use std::{any::Any};
 
 use data::Data;
 
+mod query;
 mod data;
 
 pub struct World {
